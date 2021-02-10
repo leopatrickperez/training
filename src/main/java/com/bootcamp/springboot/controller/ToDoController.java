@@ -31,6 +31,5 @@ public class ToDoController {
         System.out.println(this.db.getDbName());
         return new ResponseEntity<>(toDoList, HttpStatus.OK);
     }
-
 }
 

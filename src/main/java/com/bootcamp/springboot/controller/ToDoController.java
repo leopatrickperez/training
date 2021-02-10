@@ -25,13 +25,10 @@ public class ToDoController {
         this.db = db;
         this.todoService = todoService;
     }
-
     @GetMapping("/all")
     public ResponseEntity<List<ToDo>> getTodo() {
         List<ToDo> toDoList = this.todoService.getToDo();
-
         System.out.println(this.db.getDbName());
-
         return new ResponseEntity<>(toDoList, HttpStatus.OK);
     }
 

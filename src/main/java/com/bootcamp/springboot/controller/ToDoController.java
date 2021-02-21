@@ -5,31 +5,94 @@ import com.bootcamp.springboot.config.config;
 import com.bootcamp.springboot.model.ToDo;
 import com.bootcamp.springboot.services.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
-@RequestMapping("todo")
-
+@RequestMapping("/todo")
 public class ToDoController {
-    private config db;
-    private ToDoService todoService;
+
+
+    private ToDoService toDoService;
 
     @Autowired
-    public ToDoController(config db, ToDoService todoService) {
-        this.db = db;
-        this.todoService = todoService;
+    public ToDoController(ToDoService toDoService) {
+        this.toDoService = toDoService;
     }
-    @GetMapping("/all")
-    public ResponseEntity<List<ToDo>> getTodo() {
-        List<ToDo> toDoList = this.todoService.getToDo();
-        System.out.println(this.db.getDbName());
-        return new ResponseEntity<>(toDoList, HttpStatus.OK);
+
+
+    @GetMapping("/list")
+    public String list(Model model) {
+        List<ToDo> toDos = new ArrayList<>();
+        try {
+            toDos = this.toDoService.findAll();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        model.addAttribute("todos", toDos);
+        model.addAttribute("toDo", new ToDo());
+        return "list";
     }
+
+    @GetMapping("/create")
+    public String create(ToDo toDo) {
+        return "create";
+    }
+
+    @PostMapping("/insert")
+    public String insert(@ModelAttribute ToDo toDo) {
+        try {
+            toDo.setCreatedOn();
+            this.toDoService.save(toDo);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return "redirect:/todo/list";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") long id, Model model) {
+        try {
+            Optional<ToDo> toDo = this.toDoService.findById(id);
+            if (toDo.isPresent()) {
+                model.addAttribute("toDo", toDo.get());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return "update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") long id, @ModelAttribute ToDo toDo) {
+        try {
+            Optional<ToDo> ToDo2= this.toDoService.findById(id);
+            if (ToDo2.isPresent()) {
+                toDo.setCreatedOn(ToDo2.get().getCreatedOn());
+            }
+            this.toDoService.save(toDo);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return "redirect:/todo/list";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") long id) {
+        try {
+            this.toDoService.delete(id);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return "redirect:/todo/list";
+    }
+
 }
 

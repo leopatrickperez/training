@@ -1,12 +1,11 @@
 package com.bootcamp.springboot.model;
-import java.sql.Timestamp;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ToDo")
-public class ToDo {
+@Table(name = "Role")
+public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private long id;
 
@@ -16,17 +15,13 @@ public class ToDo {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "CreatedOn")
-    private Timestamp createdOn;
-
-    public ToDo() {
+    public Role() {
     }
 
-    public ToDo(long id, String name, String description) {
+    public  Role(long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.createdOn = new Timestamp(System.currentTimeMillis());
     }
 
     public long getId() {
@@ -53,15 +48,12 @@ public class ToDo {
         this.description = description;
     }
 
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public void setCreatedOn() {
-        this.createdOn = new Timestamp(System.currentTimeMillis());
-    }
 }
+
+
+
+
+
+
+
+
